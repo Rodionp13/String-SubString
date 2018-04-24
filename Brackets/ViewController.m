@@ -16,39 +16,46 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    @autoreleasepool {
     
     NSString *input = @"Prime Minister <Narendra Modi> tweeted a <link> to the speech (Human Resource Development Minister Smriti Irani) <made> in the Lok Sabha during the ((debate) on the ongoing JNU row) and the suicide of Dalit scholar Rohith Vemula at the [Hyderabad Central University].";
     NSMutableString *mutINPUT = [input mutableCopy];
     
+    //diktionaries for tags
     NSMutableDictionary *openTags = [NSMutableDictionary dictionary];
     NSMutableDictionary *closeTags = [NSMutableDictionary dictionary];
     
     int counterForOpen = -1, counterForClose = -1;
     
     
+    
+    //added tags to collections (openTags, closeTags)
     for(int i = 0; i < [input length]; i++) {
-        NSLog(@"%d", i);
+//        NSLog(@"%d", i);
         NSMutableString *charAtIndex = [NSMutableString stringWithFormat:@"%c", [mutINPUT characterAtIndex:i]];
         if([charAtIndex isEqualToString:@"<"] || [charAtIndex isEqualToString:@"("] || [charAtIndex isEqualToString:@"["]) {
             counterForOpen++;
             NSValue *valueOfRangeOfOPENtag = [NSValue valueWithRange:[mutINPUT rangeOfString:charAtIndex]];
             [openTags setObject:valueOfRangeOfOPENtag forKey:[NSNumber numberWithInt:counterForOpen]];
             
+            
             [mutINPUT replaceOccurrencesOfString:charAtIndex withString:@" " options:NSCaseInsensitiveSearch range:NSMakeRange(i, 1)];
-            NSLog(@"%@", openTags);
+//            NSLog(@"%@", openTags);
         } else if([charAtIndex isEqualToString:@">"] || [charAtIndex isEqualToString:@")"] || [charAtIndex isEqualToString:@"]"]) {
             counterForClose++;
             NSValue *valueOfRangeOfCLOSEtag = [NSValue valueWithRange:[mutINPUT rangeOfString:charAtIndex]];
             [closeTags setObject:valueOfRangeOfCLOSEtag forKey:[NSNumber numberWithInt:counterForClose]];
             
             [mutINPUT replaceOccurrencesOfString:charAtIndex withString:@" " options:NSCaseInsensitiveSearch range:NSMakeRange(i, 1)];
-            NSLog(@"%@", closeTags);
+//            NSLog(@"%@", closeTags);
         }
     }
     
     
     
-    
+    //created an Output Array to store string, that is consisted from 2 bracket's ranges(from openTags and closeTags)
+    //Так и не смог разобраться как правильно достать (или отортировать словари, а потом доставать) нужные range из openTags , closeTags, чтобы получить
+    //нужные строки...   Ranges в openTags , closeTags сохранены правильно. Совместить - проблема...
     NSMutableArray *tempArrOfStringRanges = [NSMutableArray array];
     
     for(int i = 0; i < [openTags count]; i++) {
@@ -77,7 +84,7 @@
                 [closeTags removeObjectForKey:[NSNumber numberWithInt:j]];
 
             }
-
+            
         }
     }
     
@@ -87,15 +94,11 @@
     
     NSLog(@"%@", openTags);
     NSLog(@"%@", closeTags);
-//    NSLog(@"%@", [input substringWithRange:NSMakeRange(6 + 1, 61 - 6 - 1)]);
-//    NSLog(@"%@", [input substringWithRange:NSMakeRange(7 + 1, 31 - 7 - 1)]);
-//    NSLog(@"%@", [input substringWithRange:NSMakeRange(14 + 1, 25 - 14 - 1)]);
-//    NSLog(@"%@", [input substringWithRange:NSMakeRange(21 + 1, 181 - 21 - 1)]);
-//    NSLog(@"%@", [input substringWithRange:NSMakeRange(306 + 1, 384 - 306 - 1)]);
-//    NSLog(@"%@", [input substringWithRange:NSMakeRange(327, 376 - 327 - 1)]);
-//    NSLog(@"%@", [input substringWithRange:NSMakeRange(335 + 1, 347 - 335 - 1)]);
     NSLog(@"%@", tempArrOfStringRanges);
-    
+        
+        
+        [mutINPUT release];
+    }
 }
 
 
